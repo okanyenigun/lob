@@ -31,10 +31,43 @@
     </div>
   </div>
   <div class="right-context">
-    <div class="chart-container">
-      {% if graph %} {{ graph|safe }} {% else %}
-      <p>No graph was provided.</p>
-      {% endif %}
+    <div class="top-chart-container">
+      <div class="chart-area">
+        {% if graph %} {{ graph|safe }} {% else %}
+        <p>No graph was provided.</p>
+        {% endif %}
+      </div>
+    </div>
+    <div class="middle-chart-container">
+      <div class="upper-row">
+        <form method="GET">
+          <select name="indicator" id="indicator">
+            {% if indicator_choice == "macd" %}
+            <option value="macd" selected>MACD</option>
+            {% elif indicator_choice == "rsi" %}
+            <option value="rsi" selected>RSI</option>
+            {% elif indicator_choice == "support" %}
+            <option value="support" selected>Support&Resistancce</option>
+            {% endif %}
+            <option value="macd">MACD</option>
+            <option value="rsi">RSI</option>
+            <option value="support">Support&Resistancce</option>
+          </select>
+          <button
+            name="indicator_chart"
+            id="indicator_chart"
+            class="btn btn-info"
+          >
+            Chart
+          </button>
+        </form>
+      </div>
+
+      <div class="chart-area">
+        {% if indicatorGraph %} {{ indicatorGraph|safe }} {% else %}
+        <p>No graph was provided.</p>
+        {% endif %}
+      </div>
     </div>
   </div>
 </div>

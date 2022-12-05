@@ -15,5 +15,7 @@ class BackView(View):
             file = Utility.download_static_file(path)
             if file:
                 return file
-        context = BackController.collect_page_elements(M.df_lob)
+        if "indicator_chart" in request.GET:
+            indicator = request.GET.get("indicator")
+        context = BackController.collect_page_elements(M.df_lob, indicator)
         return render(request, './templates/backtest.html', context)

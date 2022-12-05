@@ -4,6 +4,7 @@ import plotly.graph_objs as go
 from django.conf import settings
 from builder.meta import Meta
 from utility.utils import Utility
+from indicators.macd import Macd
 
 class BackController:
     """a kind of controller component
@@ -23,12 +24,14 @@ class BackController:
         return path
 
     @staticmethod
-    def collect_page_elements(df):
+    def collect_page_elements(df, indicator):
         data = {}
         #table
         data["arr"], data["columns"] = Utility.convert_df_to_html(df.iloc[:200,:])
         #chart
         data["graph"] = BackController.draw_line_chart(df)
+        #indicator chart
+        data["indicatorGraph"] = BackController.get_indicator_chart(indicator)
         return data
 
     @staticmethod
@@ -40,5 +43,11 @@ class BackController:
         fig.add_trace(go.Scatter(name="bids", x=x, y=bid,line=dict(color="green"), showlegend=True))
         fig.add_trace(go.Scatter(name="asks", x=x, y=ask,line=dict(color="red"), showlegend=True))
         graph = fig.to_html(full_html=False, default_height=height, default_width=width)
-        print(type(graph))
         return graph
+
+    @staticmethod
+    def get_indicator_chart(df, indicator):
+        if indicator == "macd":
+            M = Macd(df["bid1px"].values.tolist())
+            chart = M.get_macd_chart(df["network_time"].values.tolist(),{"h":400,"w":800,"title":"MACD", "ytitle":""})
+        return chart

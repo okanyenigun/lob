@@ -2,3 +2,4 @@ django
 pandas
 openpyxl
 plotly
+ta-lib
