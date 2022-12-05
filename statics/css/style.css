@@ -5,9 +5,6 @@
     
 }
 
-button {
-margin: 20px;
-}
 
 .custom-btn {
 width: 130px;
@@ -61,3 +58,38 @@ height: 100%;
 top: 2px;
 }
 
+
+
+.data-preview{
+    max-width: 30vw;
+    overflow: auto;
+    padding:10px 10px;
+}
+
+.data-preview-top{
+    display:flex;
+    justify-content:space-between;
+}
+
+.tablex{
+    height: 90vh;
+    display: inline-block; 
+    overflow: auto;
+}
+.tablex td, th {
+    font-size: 8px;
+    width: 10px;
+    height: 10px;
+    white-space: nowrap;
+}
+
+#excel{
+   font-size:0.8rem;
+   text-align: right;
+   display:table-cell;
+
+}
+
+.backtest-container{
+    display: flex;
+}

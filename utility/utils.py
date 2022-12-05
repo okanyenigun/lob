@@ -1,4 +1,9 @@
+import os
+import json
+import mimetypes
 import pandas as pd
+from django.http import HttpResponse
+from wsgiref.util import FileWrapper
 
 class Utility:
     
@@ -24,4 +29,36 @@ class Utility:
         map_dict = source[map_title].to_dict()
         new_data[new_column] = new_data[indexed_title].map(map_dict)
         return new_data
+
+    @staticmethod
+    def convert_df_to_html(df: pd.DataFrame) -> tuple([list, list]):
+        """converts a dataframe to display in html
+
+        Args:
+            df (pd.DataFrame): dataframe
+
+        Returns:
+            tuple: arr: data & columns
+        """
+        columns = df.columns.values.tolist()
+        json_records = df.to_json(orient="records")
+        arr = json.loads(json_records)
+        return arr, columns
     
+    @staticmethod
+    def download_static_file(path: str) -> HttpResponse:
+        """download files in statics
+
+        Args:
+            path (str): file path in statics
+
+        Returns:
+            HttpResponse: contains the file
+        """
+        wrapper = FileWrapper(open(path, 'rb'))
+        file_mimetype = mimetypes.guess_type(path)
+        response = HttpResponse(wrapper, content_type=file_mimetype)
+        response['X-Sendfile'] = path
+        response['Content-Length'] = os.stat(path).st_size
+        response['Content-Disposition'] = 'attachment; filename=' + os.path.basename(path)
+        return response
