@@ -94,7 +94,6 @@ class MacdChart(IChartMaker):
 
     def create_figure(self):
         fig = go.Figure(data=go.Scatter())
-        print(type(fig))
         fig.add_trace(go.Scatter(x=self.df["opentime"], y=self.df["macd"],line=dict(color="#a74f26"), showlegend=False))
         fig.add_trace(go.Scatter(x=self.df["opentime"], y=self.df["macdsignal"],line=dict(color="#a74f26"), showlegend=False))
         fig.add_trace(go.Scatter(x=self.df["opentime"], y=self.df["macdhist"],line=dict(color="#a74f26"), showlegend=False))
@@ -107,5 +106,4 @@ class RsiChart(IChartMaker):
 
     def create_figure(self):
         fig = go.Figure(data=go.Scatter(x = self.df["opentime"], y = self.df["values"]))
-        print(type(fig))
         return fig

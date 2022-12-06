@@ -12,12 +12,16 @@ class DataBuilder:
         Returns:
             pd.DataFrame: final lob dataframe   
         """
+        #clean data and fill missings
         D = DataProcessor(path)
         df = D.setup()
+        #create mold 
         M = Molder(df)
         df_lob_mold = M.mold()
+        #obtain lob rows
         L = Lobber(df_lob_mold)
         rows, _, _ = L.create()
+        #create final df
         df_lob_price = pd.DataFrame(data=rows)
         df_lob = pd.concat([df_lob_mold, df_lob_price], axis=1)
         df_lob.columns = ["network_time","Date","Mold Package", "bid3qty", "bid3px",

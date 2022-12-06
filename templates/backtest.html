@@ -4,91 +4,100 @@
 {% include 'sidebar.html' %}
 <link rel="stylesheet" href="{% static 'css/backtest.css' %}?{% now 'U' %}">
 <div class="main-content">
-  <div class="card-panel">
-    <div class="card-body">
-      <h2>RSI</h2>
-      <div class="card-input-row">
-        <label for="rsi-low" class="col-form-label">Lower:</label>
-        <input class="form-control-sm" type="number" name="rsi_low" value="30" id="rsi-low" />
+  <div class="left">
+    <div class="card-panel">
+      <div class="card-body">
+        <h2>RSI</h2>
+        <div class="card-input-row">
+          <label for="rsi-low" class="col-form-label">Lower:</label>
+          <input class="form-control-sm" type="number" name="rsi_low" value="30" id="rsi-low" />
+        </div>
+        <div class="card-input-row">
+          <label class="col-form-label" for="rsi-up">Upper:</label>
+          <input class="form-control-sm" type="number" name="rsi_up" value="70" id="rsi-up" />
+        </div>
+        <div class="card-input-row">
+          <label class="col-form-label" for="rsi-period">Period:</label>
+          <input class="form-control-sm" type="number" name="rsi" value="14" id="rsi-period" />
+        </div>
+        <div class="card-input-row row-bottom">
+          <button class="btn btn-warning" name="add" id="add">Add</button>
+        </div>
       </div>
-      <div class="card-input-row">
-        <label class="col-form-label" for="rsi-up">Upper:</label>
-        <input class="form-control-sm" type="number" name="rsi_up" value="70" id="rsi-up" />
-      </div>
-      <div class="card-input-row">
-        <label class="col-form-label" for="rsi-period">Period:</label>
-        <input class="form-control-sm" type="number" name="rsi_period" value="14" id="rsi-period" />
-      </div>
-      <div class="card-input-row row-bottom">
-        <button class="btn btn-warning" name="add" id="add">Add</button>
-      </div>
-    </div>
-    <div class="card-body">
-      <h2>MACD</h2>
-      <div class="card-input-row">
-        <label for="macd-distance" class="col-form-label">Distance:</label>
-        <input class="form-control-sm" type="number" name="macd_distance" value="5" id="macd-distance" />
-      </div>
-      <div class="card-input-row">
-        <label for="macd-fastperiod" class="col-form-label">Fastperiod:</label>
-        <input class="form-control-sm" type="number" name="macd_fastperiod" value="12" id="macd-fastperiod" />
-      </div>
-      <div class="card-input-row">
-        <label for="macd-slowperiod" class="col-form-label">Slowperiod:</label>
-        <input class="form-control-sm" type="number" name="macd_slowperiod" value="26" id="macd-slowperiod" />
-      </div>
-      <div class="card-input-row">
-        <label for="macd-signalperiod" class="col-form-label">Signalperiod:</label>
-        <input class="form-control-sm" type="number" name="macd_signalperiod" value="29" id="macd-signalperiod" />
-      </div>
-      <div class="card-input-row row-bottom">
-        <button class="btn btn-warning" name="add" id="add">Add</button>
-      </div>
-    </div>
-    <div class="card-body">
-      <h2>S&R</h2>
-      <div class="card-input-row">
-        <label for="sr-distance" class="col-form-label">Distance:</label>
-        <input class="form-control-sm" type="number" name="sr_distance" value="5" id="sr-distance" />
-      </div>
-      <div class="card-input-row row-bottom">
-        <button class="btn btn-warning" name="add" id="add">Add</button>
-      </div>
-    </div>
-    <div class="card-body">
-      <h2>AI</h2>
-      <div class="card-input-row">
-        <label for="ai_model" class="col-form-label">Model:</label>
-        <select class="form-select" name="ai_model" id="ai_model" required>
-          <option value="LSTM">LSTM</option>
-          <option value="GRU">GRU</option>
-          <option value="SVR">SVR</option>
-          <option value="XGR">XGR</option>
-        </select>
-      </div>
-      <div class="card-input-row row-bottom">
-        <button class="btn btn-warning" name="add" id="add">Add</button>
-      </div>
-    </div>
-  </div>
-  <form method="POST">
-    {% csrf_token %}
-    <div class="config-panel">
-      <p class="title">Bucket</p>
-      <div class="parameter-list">
-
-      </div>
-      <div class="weights-area">
-        <div class="weight-input-row">
-          <button class="btn btn-success set-button" id="run_test" name="run_test">
-            Run Test
-          </button>
+      <div class="card-body">
+        <h2>MACD</h2>
+        <div class="card-input-row">
+          <label for="macd-distance" class="col-form-label">Criteria:</label>
+          <input class="form-control-sm" type="number" name="macd" value="0.1" id="macd-distance" />
+        </div>
+        <div class="card-input-row">
+          <label for="macd-fastperiod" class="col-form-label">Fastperiod:</label>
+          <input class="form-control-sm" type="number" name="macd_fastperiod" value="12" id="macd-fastperiod" />
+        </div>
+        <div class="card-input-row">
+          <label for="macd-slowperiod" class="col-form-label">Slowperiod:</label>
+          <input class="form-control-sm" type="number" name="macd_slowperiod" value="26" id="macd-slowperiod" />
+        </div>
+        <div class="card-input-row">
+          <label for="macd-signalperiod" class="col-form-label">Signalperiod:</label>
+          <input class="form-control-sm" type="number" name="macd_signalperiod" value="29" id="macd-signalperiod" />
+        </div>
+        <div class="card-input-row row-bottom">
+          <button class="btn btn-warning" name="add" id="add">Add</button>
         </div>
       </div>
     </div>
-  </form>
+    <form method="POST">
+      {% csrf_token %}
+      <div class="config-panel">
+        <p class="title">Bucket</p>
+        <div class="parameter-list">
+
+        </div>
+        <div class="weights-area">
+          <div class="weight-input-row">
+            <button class="btn btn-success set-button" id="run_test" name="run_test">
+              Run Test
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="right">
+    <h1>Back Testing Results</h1>
+    <div class="summary-context">
+      <div class="row">
+        <strong>Profit: </strong>
+        {% if profit > 0 %}
+        <p class="green">% {{profit}}</p>
+        {% else %}
+        <p class="red">% {{profit}}</p>
+        {% endif %}
+      </div>
+      <div class="row">
+        <strong> # Buy / Sell Orders: </strong>
+        <p>{{buy_orders}} / {{sell_orders}}</p>
+      </div>
+    </div>
+    <div class="transcation-history">
+      {% for t in transaction %}
+      {% if t.order == "Buy" %}
+      <p class="green">Buy Order: {{t.count}} Date: {{t.date}} Price: {{t.price}} Lot: {{t.lot}} Current Money:
+        {{t.money}} Current Stock: {{t.stock}}
+      </p>
+      {% else %}
+      <p class="red">Sell Order: {{t.count}} Date: {{t.date}} Price: {{t.price}} Lot: {{t.lot}} Current Money:
+        {{t.money}} Current Stock: {{t.stock}}
+      </p>
+      {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+
 </div>
 
 <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+<script src="https://code.iconify.design/2/2.2.1/iconify.min.js"></script>
 <script src="{% static 'js/backtest.js' %}" type="text/javascript"></script>
 {% endblock %}

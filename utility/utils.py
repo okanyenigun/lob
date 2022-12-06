@@ -2,7 +2,7 @@ import os
 import json
 import mimetypes
 import pandas as pd
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpRequest
 from wsgiref.util import FileWrapper
 
 class Utility:
@@ -64,7 +64,17 @@ class Utility:
         return response
 
     @staticmethod
-    def convert_req_to_dict(req, tip="GET"):
+    def convert_req_to_dict(req: HttpRequest, tip: str="GET") -> dict:
+        """converts a request to dictionary
+        just a type conversion
+
+        Args:
+            req (HttpRequest): request
+            tip (str, optional): request method. Defaults to "GET".
+
+        Returns:
+            dict: request parameters in dictionary type
+        """
         out = {}
         if tip == "GET":
             for key, value in req.GET.items():

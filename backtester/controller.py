@@ -1,12 +1,7 @@
-import os
-import pandas as pd
-import plotly.graph_objs as go
-from django.conf import settings
-from builder.meta import Meta
+from django.http import HttpRequest
 from utility.utils import Utility
-from indicators.macd import Macd
-from indicators.rsi import Rsi
-from backtester.service.backt import Testing
+from backtester.service.backt import Backtest
+from builder.meta import Meta
 
 class BackController:
     """a kind of controller component
@@ -14,15 +9,31 @@ class BackController:
     """
 
     @staticmethod
-    def parse_input(request):
+    def parse_input(request: HttpRequest) -> tuple([dict, dict]):
+        """parses the data from the request
+        
+        Args:
+            request (HttpRequest): request
+
+        Returns:
+            params: indicator parameters
+            percents: weights
+        """
         params = Utility.convert_req_to_dict(request, "POST")
         percents = BackController.correct_percentages(params)
-        params = BackController.foo(params)
+        params = BackController.__filter_params(params)
         return params, percents
 
     @staticmethod
-    def correct_percentages(params):
-        "if user dont fill percentages inputs, it is averaged"
+    def correct_percentages(params: dict) -> list:
+        """if user dont fill percentage(weight) inputs, it is averaged
+        for example; two indicator, each has 0 as weights, this will return 50-50
+        Args:
+            params (dict): indicator input parameters dictionary
+
+        Returns:
+            list: list of percentages
+        """
         percents = []
         for key, value in params.items():
             if "weight" in key:
@@ -62,7 +73,15 @@ class BackController:
         return data
 
     @staticmethod
-    def foo(params):
+    def __filter_params(params: dict) -> dict:
+        """a helper function to filter request parameters
+
+        Args:
+            params (dict): obtained from request
+
+        Returns:
+            dict: filtered parameters
+        """
         data = {}
         for key, value in params.items():
             if "csrf" in key or "weight" in key or "buy" in key or "sell" in key:
@@ -71,8 +90,16 @@ class BackController:
         return data
 
     @staticmethod
-    def run_backtest(params, percents):
-        T = Testing(params, percents)
-        T.run()
+    def run_backtest(params: dict, percents: dict) -> tuple([list, int, int, float]):
+        """runs the backtest
 
-        return
+        Args:
+            params (_type_): params & percents
+
+        Returns:
+            transaction history, #buy and sell orders and total profil in percentage
+        """
+        M = Meta()
+        B = Backtest(params, percents, M.df_lob)
+        transaction_history, buy_count, sell_count, profit = B.test()
+        return transaction_history[::-1], buy_count, sell_count, profit

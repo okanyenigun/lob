@@ -11,9 +11,9 @@ class BuilderView(View):
 
     def get(self, request: HttpRequest) -> HttpResponse:
         if "submit-build" in request.GET:
+            #build data
             M = Meta()
-            #M.df_lob = DataBuilder.build(M.path)
-            M.df_lob = pd.read_excel("D:\\Documents\\Downloads\\lob.xlsx")
+            M.df_lob = DataBuilder.build(M.path)
             return redirect("home")
         return render(request, './templates/builder.html')
 

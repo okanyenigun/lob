@@ -27,3 +27,7 @@ class Indicator(ABC):
     def prepare_chart_data(self):
         """prepares the data required for chart
         """
+    @abstractmethod
+    def parse_value_from_series(self, *args):
+        """it selects the necessary information for signal calculation
+        needs customization for each indicator"""

@@ -5,18 +5,8 @@ const titleEls = document.querySelectorAll('h2')
 const cardEls = document.querySelectorAll('.card-body')
 
 
-
-dropDowns.forEach((d) =>{
-    d.addEventListener('change',()=>{
-        var options = d.options;
-        for(var i=0; i< options.length;i++){
-            options[i].removeAttribute("selected")
-        }      
-        d.options[d.options.selectedIndex].setAttribute("selected", "selected")
-    })
-})
-
 function removeCard () {
+  //removes bucket card
     const closeIcons = document.querySelectorAll('.card__exit')
     closeIcons.forEach((close) =>{
         close.addEventListener('click', ()=>{
@@ -64,7 +54,7 @@ addBtns.forEach((btn) => {
               class="form-control-sm"
               type="number"
               name="weight_${title}"
-              value="25"
+              value="0"
               id="weight-${title}"
             />
           </div>
