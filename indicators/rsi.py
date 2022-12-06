@@ -2,25 +2,32 @@ import talib as ta
 import numpy as np
 import pandas as pd
 from utility.charts import RsiChart
+from indicators.abs import Indicator
 
-class Rsi():
+class Rsi(Indicator):
 
-    def __init__(self, closes: list, period:int=14):
+    def __init__(self, closes: list, dates:list) -> None:
+        self.title = "RSI"
         self.closes = closes
-        self.period = period
+        self.dates = dates
+        self.period = 14
 
-    def calculate_series(self):
+    def set_parameters(self, period:int=14) -> None:
+        self.period = period
+        return
+
+    def calculate_series(self) -> np.ndarray:
         return ta.RSI(np.array(self.closes), timeperiod=self.period)
 
-    def get_rsi_chart(self, opentime_list, customs):
-        df = self.__create_chart_data(opentime_list)
+    def get_chart(self, customs: dict) -> str:
+        df = self.prepare_chart_data()
         R = RsiChart(df,customs)
         chart = R.get_chart()
         return chart
 
-    def __create_chart_data(self,opentime_list):
+    def prepare_chart_data(self) -> pd.DataFrame:
         df = pd.DataFrame()
-        df["opentime"] = opentime_list
+        df["opentime"] = self.dates
         df["values"] = self.calculate_series()
         df.dropna(inplace=True)
         return df

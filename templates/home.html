@@ -41,16 +41,13 @@
         <div class="input-chart-row">
             <form method="GET">
                 <select name="indicator" id="indicator">
-                    {% if indicator_choice == "macd" %}
+                    {% if indicator == "macd" %}
                     <option value="macd" selected>MACD</option>
-                    {% elif indicator_choice == "rsi" %}
-                    <option value="rsi" selected>RSI</option>
-                    {% elif indicator_choice == "support" %}
-                    <option value="support" selected>Support&Resistancce</option>
-                    {% endif %}
-                    <option value="macd">MACD</option>
                     <option value="rsi">RSI</option>
-                    <option value="support">Support&Resistancce</option>
+                    {% elif indicator == "rsi" %}
+                    <option value="rsi" selected>RSI</option>
+                    <option value="macd">MACD</option>
+                    {% endif %}
                 </select>
                 <button name="indicator_chart" id="indicator_chart" class="btn btn-info">
                     Chart

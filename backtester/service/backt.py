@@ -24,14 +24,11 @@ class Testing:
                 for i in range(self.df.shape[0]):
                     signal = I.get_signal(self.df.loc[i,"rsi"])
                     liste.append(signal)
-                print(len(liste))
                 #get signal
                 for weight in self.weights:
                     if weight["parametername"] == "RSI":
-                        print((weight["percent"]/100))
                         liste = [x * (weight["percent"]/100) for x in liste]
                 signals["rsi"] = liste
-        print(signals)
         return
             
     def parse_tests(self):

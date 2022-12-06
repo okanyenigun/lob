@@ -6,6 +6,7 @@ from builder.meta import Meta
 from utility.utils import Utility
 from indicators.macd import Macd
 from indicators.rsi import Rsi
+from indicators.abs import Indicator
 
 class BuilderController:
 
@@ -22,21 +23,42 @@ class BuilderController:
         return path
 
     @staticmethod
-    def collect_page_elements(df, indicator):
+    def collect_page_elements(indicator: str) -> dict:
+        """collects UI elements to display in home page
+
+        Args:
+            indicator (str): indicator type for chart
+
+        Returns:
+            dict: context data
+        """
+        M = Meta()
         data = {}
         #table
-        data["arr"], data["columns"] = Utility.convert_df_to_html(df.iloc[:200,:])
+        data["arr"], data["columns"] = Utility.convert_df_to_html(M.df_lob.iloc[:200,:])
         #chart
-        data["graph"] = BuilderController.draw_line_chart(df)
+        data["graph"] = BuilderController.draw_line_chart(M.df_lob)
         #indicator chart
-        data["indicatorGraph"] = BuilderController.get_indicator_chart(df,indicator)
+        indicator_objects = {"macd": Macd, "rsi": Rsi}
+        data["indicatorGraph"] = BuilderController.get_indicator_chart(M.df_lob, indicator_objects[indicator])
         return data
 
     @staticmethod
-    def draw_line_chart(df: pd.DataFrame, yrange:list = [11.6, 12], height: int = 400, width: int = 800) -> str:
-        x = df["network_time"].values.tolist()
+    def draw_line_chart(df: pd.DataFrame, height: int = 400, width: int = 800) -> str:
+        """bid and ask line chart
+
+        Args:
+            df (pd.DataFrame): lob
+            height (int, optional): chart heigth. Defaults to 400.
+            width (int, optional): chart width. Defaults to 800.
+
+        Returns:
+            str: html string of plotly chart
+        """
+        x = pd.to_datetime(df['network_time'])
         bid = df["bid1px"].values.tolist()
         ask = df["ask1px"].values.tolist()
+        yrange = [11, 12]
         fig = go.Figure(data=go.Scatter(),layout_yaxis_range=yrange)
         fig.add_trace(go.Scatter(name="bids", x=x, y=bid,line=dict(color="green"), showlegend=True))
         fig.add_trace(go.Scatter(name="asks", x=x, y=ask,line=dict(color="red"), showlegend=True))
@@ -44,13 +66,16 @@ class BuilderController:
         return graph
 
     @staticmethod
-    def get_indicator_chart(df, indicator):
-        if indicator == "macd":
-            M = Macd(df["bid1px"].values.tolist())
-            chart = M.get_macd_chart(df["network_time"].values.tolist(),{"h":400,"w":800,"title":"MACD", "ytitle":""})
-        elif indicator == "rsi":
-            R = Rsi(df["bid1px"].values.tolist())
-            chart = R.get_rsi_chart(df["network_time"].values.tolist(),{"h":400,"w":800,"title":"RSI", "ytitle":""})
-        elif indicator == "support":
-            pass
+    def get_indicator_chart(df: pd.DataFrame, I: Indicator) -> str:
+        """any indicator chart
+
+        Args:
+            df (pd.DataFrame): lob
+            I (Indicator): indicator object
+
+        Returns:
+            str: html string of plotly chart
+        """
+        Ind = I(df["bid1px"].values.tolist(), pd.to_datetime(df['network_time']))
+        chart = Ind.get_chart({"h":400,"w":800, "title":Ind.title, "ytitle":""})
         return chart

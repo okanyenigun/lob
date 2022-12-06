@@ -12,7 +12,5 @@ class BackView(View):
 
     def post(self, request: HttpRequest):
         params, percents = BackController.parse_input(request)
-        print("params: ",params)
-        print("percents: ",percents)
         BackController.run_backtest(params, percents)
         return render(request, './templates/backtest.html')
