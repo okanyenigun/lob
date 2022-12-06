@@ -5,6 +5,8 @@ from django.conf import settings
 from builder.meta import Meta
 from utility.utils import Utility
 from indicators.macd import Macd
+from indicators.rsi import Rsi
+from backtester.service.backt import Testing
 
 class BackController:
     """a kind of controller component
@@ -12,42 +14,65 @@ class BackController:
     """
 
     @staticmethod
-    def create_excel_for_df() -> str:
-        """creates an excel file of df_lob in the static folder
-
-        Returns:
-            str: path
-        """
-        path = os.path.join(settings.STATICFILES_DIRS[0], "files", "lob.xlsx")
-        M = Meta()
-        M.df_lob.to_excel(path, index=False)
-        return path
+    def parse_input(request):
+        params = Utility.convert_req_to_dict(request, "POST")
+        percents = BackController.correct_percentages(params)
+        params = BackController.foo(params)
+        return params, percents
 
     @staticmethod
-    def collect_page_elements(df, indicator):
-        data = {}
-        #table
-        data["arr"], data["columns"] = Utility.convert_df_to_html(df.iloc[:200,:])
-        #chart
-        data["graph"] = BackController.draw_line_chart(df)
-        #indicator chart
-        data["indicatorGraph"] = BackController.get_indicator_chart(indicator)
+    def correct_percentages(params):
+        "if user dont fill percentages inputs, it is averaged"
+        percents = []
+        for key, value in params.items():
+            if "weight" in key:
+                percents.append(float(value))
+        total = 0
+        for p in percents:
+            total += float(p)
+        if total == 100:
+            return percents
+        if total > 100:
+            diff = 1 / ((total - 100) / len(percents))
+            percents = [float(x) - (float(x) * diff) for x in percents]
+        elif total > 0 and total < 100:
+            percents = [float(x) * 100 / total for x in percents]
+        else:
+            ratio = 100 / len(percents)
+            percents = [ratio] * len(percents)
+        data = []
+        
+        i = 0
+        for key, value in params.items():
+            out = {}
+            if "weight" in key:
+                if "_RSI" in key:
+                    out["parametername"] = "RSI"
+                elif "_Bollinger" in key:
+                    out["parametername"] = "Bollinger"
+                elif "_MACD" in key:
+                    out["parametername"] = "MACD"
+                elif "_S&R" in key:
+                    out["parametername"] = "Support&Resistance"
+                elif "_AI" in key:
+                    out["parametername"] = "AI"
+                out["percent"] = percents[i]
+                i += 1
+                data.append(out)
         return data
 
     @staticmethod
-    def draw_line_chart(df: pd.DataFrame, yrange:list = [11.6, 12], height: int = 400, width: int = 800) -> str:
-        x = df["network_time"].values.tolist()
-        bid = df["bid1px"].values.tolist()
-        ask = df["ask1px"].values.tolist()
-        fig = go.Figure(data=go.Scatter(),layout_yaxis_range=yrange)
-        fig.add_trace(go.Scatter(name="bids", x=x, y=bid,line=dict(color="green"), showlegend=True))
-        fig.add_trace(go.Scatter(name="asks", x=x, y=ask,line=dict(color="red"), showlegend=True))
-        graph = fig.to_html(full_html=False, default_height=height, default_width=width)
-        return graph
+    def foo(params):
+        data = {}
+        for key, value in params.items():
+            if "csrf" in key or "weight" in key or "buy" in key or "sell" in key:
+                continue
+            data[key] = value
+        return data
 
     @staticmethod
-    def get_indicator_chart(df, indicator):
-        if indicator == "macd":
-            M = Macd(df["bid1px"].values.tolist())
-            chart = M.get_macd_chart(df["network_time"].values.tolist(),{"h":400,"w":800,"title":"MACD", "ytitle":""})
-        return chart
+    def run_backtest(params, percents):
+        T = Testing(params, percents)
+        T.run()
+
+        return

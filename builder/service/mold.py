@@ -33,7 +33,7 @@ class Molder:
         string = ""
         for _, row in temp.iterrows():
             string += "-".join([str(row["msg_type"]), str(row["side"]), 
-                                str(row["price"]), str(row["qty"]), 
+                                str(row["price"]), str(int(float(row["qty"]))), 
                                 str(row["order_id"])]) + ";"
         return string[:-1]
     

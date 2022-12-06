@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/side.css' %}?{% now 'U' %}">
+<header class="header" role="banner">
+    <h1 class="logo">
+        <a href=""> <span>Project</span></a>
+    </h1>
+    <div class="nav-wrap">
+        <nav class="main-nav" role="navigation">
+            <ul class="unstyled list-hover-slide">
+                <li><a href="{% url 'home' %}">Home</a></li>
+            </ul>
+            <ul class="unstyled list-hover-slide">
+                <li><a href="{% url 'backtester' %}">Backtesting</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+{% endblock %}

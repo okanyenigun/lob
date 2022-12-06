@@ -1,97 +1,124 @@
 import itertools
 import pandas as pd
+
 class Lobber:
+    """finalizes the limit order book, performs operations a,e,d
+    """
     
-    def __init__(self, df: pd.DataFrame):
+    def __init__(self, df:pd.DataFrame) -> None:
         self.df = df
-        self.buy_orders = {}
-        self.sell_orders = {}
-        self.rows = []
-        
+        self.buy_orders = {} #stores buy orders key:price value:qty
+        self.sell_orders = {} #stores sell orders
+        self.rows = [] #each row of lob df
+
     def create(self) -> tuple([list, dict, dict]):
-        """procedural method
+        """The method that implements the trading decisions (A,E,D) for each mold information in the sent mold dataset.
 
         Returns:
-            a tuple: lob rows list, buy and sell orders dictionaries
+            tuple: the rows and orders
         """
-        for i in range(self.df.shape[0]):
-            row = self.df.loc[i, "mold"].split(";")
-            for j in range(len(row)):
-                liste = row[j].split("-")
-                side = liste[1]
-                price = float(liste[2])
-                qty = int(liste[3])
-                #buy&sell
-                qty = self._buysell(side, price, qty)
-                #book
-                self._add_to_book(side, price, qty)
-                #row
+        for _, row in self.df.iterrows():
+            mold_list = row["mold"].split(";")
+            self._direct_orders(mold_list)
             row = self._parse_row()
             self.rows.append(row)
         return self.rows, self.buy_orders, self.sell_orders
-    
-    def _buysell(self, side, price, qty):
-        if side == "B":
-            qty, self.sell_orders = self.__transact(price, self.sell_orders, qty, 1, False)
-        elif side == "S":
-            qty, self.buy_orders = self.__transact(price, self.buy_orders, qty, -1, True)
-        return qty
-        
-    def __transact(self, price, price_book, qty, direction, reverse):
-        """direction=1 : buy"""
-        prices = sorted(list(price_book.keys()), reverse=reverse)
-        for p in prices:
-            if price_book[p] == 0:
-                continue
-            #print(price * direction >= p * direction)
-            if price * direction >= p * direction:
-                if price_book[p] >= qty:
-                    #print(f"if transact: {price} direction: {direction} p: {p} p_qty: {price_book[p]} - qty: {qty}")
-                    price_book[p] += -qty
-                    #print(price_book[p])
-                    if price_book[p] == 0:
-                        price_book.pop(p)
-                    qty = 0
-                else:
-                    #print(f"else transact: {price} direction: {direction} p: {p} p_qty: {price_book[p]} - qty: {qty}")
-                    val = price_book[p]
-                    price_book.pop(p)
-                    qty += -val
-        return qty, price_book
 
-    def _add_to_book(self, side, price, qty):
-        if side == "B":
-            self.buy_orders = self.__adding(self.buy_orders, price, qty)
-        elif side == "S":
-            self.sell_orders = self.__adding(self.sell_orders, price, qty)
+    def _direct_orders(self, mold_list: list) -> None:
+        """apply buy or sell for each order in mold list
+
+        Args:
+            mold_list (list): mold
+        """
+        [self._buysell(x.split("-")[0], x.split("-")[1], float(x.split("-")[2]), int(x.split("-")[3])) for x in mold_list]
         return
     
-    def __adding(self, price_book, price, qty):
-        if qty == 0:
-            return price_book
-        keys = list(price_book.keys())
-        if price in keys:
+    def _buysell(self, msg: str, side: str, price: float, qty: int) -> None:
+        """drop or add to order books
+
+        Args:
+            msg (str): A, E, D
+            side (str): Buy or Sell
+            price (float): price data
+            qty (int): quantity data
+        """
+        if msg == "E" and side == "B":
+            #bidden düş
+            self.buy_orders = self.__drop_order(price, self.buy_orders, qty)
+        elif msg == "E" and side == "S":
+            #sellden düş
+            self.sell_orders = self.__drop_order(price, self.sell_orders, qty)
+        elif msg == "D" and side == "B":
+            #bidden düş
+            self.buy_orders = self.__drop_order(price, self.buy_orders, qty)
+        elif msg == "D" and side == "S":
+            #sellden düş
+            self.sell_orders = self.__drop_order(price, self.sell_orders, qty)
+        elif msg == "A" and side == "B":
+            #add buy
+            self.buy_orders = self.__add_order(price, self.buy_orders, qty)
+        elif msg == "A" and side == "S":
+            #add sell
+            self.sell_orders = self.__add_order(price, self.sell_orders, qty)
+        return
+    
+    def __add_order(self, price: float, price_book: dict, qty: int) -> dict:
+        """add qty to price level
+
+        Args:
+            price (float): price data
+            price_book (dict): buy_orders or sell_orders
+            qty (int): quantity
+
+        Returns:
+            dict: buy_orders or sell_orders
+        """
+        try:
             price_book[price] += qty
-        else:
+        except:
             price_book[price] = qty
         return price_book
     
-    def _parse_row(self):
+    def __drop_order(self, price: float, price_book: dict, qty: int) -> dict:
+        """if exists drop; if all the qty sold, drop the key
+
+        Args:
+             price (float): price data
+            price_book (dict): buy_orders or sell_orders
+            qty (int): quantity
+
+        Returns:
+            dict: buy_orders or sell_orders
+        """
+        if price in list(price_book.keys()):
+            if price_book[price] > qty:
+                price_book[price] += -qty
+            else:
+                price_book.pop(price)
+        return price_book
+    
+    def _parse_row(self) -> list:
+        """return one list (group)
+
+        Returns:
+            list: each row of lob df
+        """
         bids = self.__find_rows(self.buy_orders, True)[::-1]
-        #print("bids: ",bids)
         asks = self.__find_rows(self.sell_orders, False)
-        #print("asks: ",asks)
-        #print()
-        #print(list(itertools.chain(bids, asks)))
         return list(itertools.chain(bids, asks))
         
-    def __find_rows(self, price_list,reverse):
+    def __find_rows(self, price_list: dict, reverse: bool) -> list:
+        """extract each part of bids and asks 
+
+        Args:
+            price_list (dict): sell or buy orders 
+            reverse (bool): direction of sorting
+
+        Returns:
+            list: ask or bid row part
+        """
         prices = sorted(list(price_list.keys()), reverse=reverse)[:3]
-        #print("prices: ",prices)
-        #print("price_list: ",price_list)
         qty_list = [price_list[e] for e in prices]
-        #print("qty_list: ",qty_list)
         merged = list([x for x in itertools.chain.from_iterable(itertools.zip_longest(prices,qty_list)) if x])
         merged.extend(itertools.repeat(0, 6-len(merged)))
         return merged
-        

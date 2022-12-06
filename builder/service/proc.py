@@ -7,7 +7,7 @@ class DataBuilder:
 
     @staticmethod
     def build(path: str) -> pd.DataFrame:
-        """a procedural method
+        """a procedural method to create lob dataset from given order data
         path: path of excel file
         Returns:
             pd.DataFrame: final lob dataframe   

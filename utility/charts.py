@@ -56,7 +56,17 @@ class MacdChart(ChartMaker):
 
     def create_figure(self):
         fig = go.Figure(data=go.Scatter())
-        fig.add_trace(go.Scatter(x=self.df["Date"], y=self.df["macd"],line=dict(color="#a74f26"), showlegend=False))
-        fig.add_trace(go.Scatter(x=self.df["Date"], y=self.df["macdsignal"],line=dict(color="#a74f26"), showlegend=False))
-        fig.add_trace(go.Scatter(x=self.df["Date"], y=self.df["macdhist"],line=dict(color="#a74f26"), showlegend=False))
+        print(self.df.columns)
+        fig.add_trace(go.Scatter(x=self.df["opentime"], y=self.df["macd"],line=dict(color="#a74f26"), showlegend=False))
+        fig.add_trace(go.Scatter(x=self.df["opentime"], y=self.df["macdsignal"],line=dict(color="#a74f26"), showlegend=False))
+        fig.add_trace(go.Scatter(x=self.df["opentime"], y=self.df["macdhist"],line=dict(color="#a74f26"), showlegend=False))
+        return fig
+
+class RsiChart(ChartMaker):
+
+    def __init__(self, df: pd.DataFrame, customs: dict):
+        super().__init__(df,customs)
+
+    def create_figure(self):
+        fig = go.Figure(data=go.Scatter(x = self.df["opentime"], y = self.df["values"]))
         return fig

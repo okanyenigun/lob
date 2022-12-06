@@ -62,3 +62,14 @@ class Utility:
         response['Content-Length'] = os.stat(path).st_size
         response['Content-Disposition'] = 'attachment; filename=' + os.path.basename(path)
         return response
+
+    @staticmethod
+    def convert_req_to_dict(req, tip="GET"):
+        out = {}
+        if tip == "GET":
+            for key, value in req.GET.items():
+                out[key] = value
+        elif tip == "POST":
+            for key, value in req.POST.items():
+                out[key] = value
+        return out
