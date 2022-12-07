@@ -6,25 +6,25 @@ A draft django application works on stock order data
 
 -Create a virtual env\
 python -m venv .env\
-(for mac-> python3 -m venv .env)\
+(for mac-> python3 -m venv .env)
 
--Select the new venv as your interpreter\
+-Select the new venv as your interpreter
 
 -Install requirements\
-pip install -r requirements.txt\
+pip install -r requirements.txt
 
--Install talib package \
+-Install talib package\
 (only for windows)\
-pip install TA_Lib-0.4.24-cp38-cp38-win_amd64.whl\
+pip install TA_Lib-0.4.24-cp38-cp38-win_amd64.whl
 
 -Run server\
-python manage.py runserver\
+python manage.py runserver
 
 -go to localhost\
-http://127.0.0.1:8000/\
+http://127.0.0.1:8000/
 
 ## How it works
-APPS:\
+APPS:
 
 |-- builder -> responsible for dataset preparation (from order to lob)\
    |   |-- controller.py -> a kind of controller; mainly static methods\
