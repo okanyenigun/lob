@@ -5,8 +5,7 @@ A draft django application works on stock order data
 ## How to install
 
 -Create a virtual env\
-python -m venv .env\
-(for mac-> python3 -m venv .env)
+python -m venv .env
 
 -Select the new venv as your interpreter
 
