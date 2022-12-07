@@ -2,29 +2,29 @@
 
 A draft django application works on stock order data
 
-##How to install
+## How to install
 
--Create a virtual env
-python -m venv .env
-(for mac-> python3 -m venv .env)
+-Create a virtual env\
+python -m venv .env\
+(for mac-> python3 -m venv .env)\
 
--Select the new venv as your interpreter
+-Select the new venv as your interpreter\
 
--Install requirements
-pip install -r requirements.txt
+-Install requirements\
+pip install -r requirements.txt\
 
--Install talib package 
-(only for windows)
-pip install TA_Lib-0.4.24-cp38-cp38-win_amd64.whl
+-Install talib package \
+(only for windows)\
+pip install TA_Lib-0.4.24-cp38-cp38-win_amd64.whl\
 
--Run server
-python manage.py runserver
+-Run server\
+python manage.py runserver\
 
--go to localhost
-http://127.0.0.1:8000/
+-go to localhost\
+http://127.0.0.1:8000/\
 
-##How it works
-APPS:
+## How it works
+APPS:\
 
 |-- builder -> responsible for dataset preparation (from order to lob)\
    |   |-- controller.py -> a kind of controller; mainly static methods\
