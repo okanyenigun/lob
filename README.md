@@ -26,10 +26,8 @@ http://127.0.0.1:8000/
 ##How it works
 APPS:
 
-|-- builder -> responsible for dataset preparation (from order to lob)
-
-   |   |-- controller.py -> a kind of controller; mainly static methods
-   
+|-- builder -> responsible for dataset preparation (from order to lob)\
+   |   |-- controller.py -> a kind of controller; mainly static methods\
    |   |-- meta.py -> a singleton class to store data__
    |   |-- urls.py -> urls__
    |   |-- views.py -> views__
